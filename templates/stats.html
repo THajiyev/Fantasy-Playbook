@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Player Stats</title>
+    <link rel="stylesheet" href="../static/stats.css">
+    <link rel="stylesheet" href="../static/autocomplete.css">
+</head>
+<body>
+    <div class="autocomplete">
+        <input type="text" id="searchInput" placeholder="Start typing a name...">
+        <div class="autocomplete-results" id="autocompleteResults"></div>
+    </div>
+    <div class="no-data" id="no-data">
+        <div class="symbol">🚫</div>
+        <p>No players selected</p>
+    </div>
+    <div class="container">
+        <table id="statsTable">
+            <tbody>
+                <tr>
+                    <th>Stat</th>
+                </tr>
+                <tr>
+                    <td>Rushing Yards</td>
+                </tr>
+                <tr>
+                    <td>Rushing TDs</td>
+                </tr>
+                <tr>
+                    <td>Receiving Yards</td>
+                </tr>
+                <tr>
+                    <td>Receiving TDs</td>
+                </tr>
+                <tr>
+                    <td>Receptions</td>
+                </tr>
+                <tr>
+                    <td>Targets</td>
+                </tr>
+                <tr>
+                    <td>Target Share</td>
+                </tr>
+                <tr>
+                    <td>Receiving Yards Share</td>
+                </tr>
+                <tr>
+                    <td>Receiving touchdowns share</td>
+                </tr>
+                <tr>
+                    <td>Receiving Yards Per Team Pass Attempt</td>
+                </tr>
+                <tr>
+                    <td>Weighted Opportunity Rating</td>
+                </tr>
+            </tbody>
+        </table>        
+    </div>
+    <script src="../static/helpers.js"></script>
+    <script src="../static/stats.js"></script>
+</body>
+</html>
