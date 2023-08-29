@@ -11,16 +11,6 @@ function remove_from_knownlist(player_name){
   knownList.splice(indexToRemove, 1);
 }
 
-hide_suggestions_div(true);
-
-searchInput.addEventListener('input', () => {
-  const searchText = searchInput.value.trim().toLowerCase();
-  var filteredOptions = searchText==""?[]:knownList.filter(option =>
-    option.toLowerCase().includes(searchText)
-  );
-  displayAutocompleteResults(filteredOptions);
-});
-
 function clear_input(){
   searchInput.value = '';
   hide_suggestions_div(true);
@@ -39,6 +29,17 @@ function displayAutocompleteResults(options) {
     autocompleteResults.appendChild(option);
   }
   hide_suggestions_div(options.length==0)
+}
+
+function initialize(){
+  hide_suggestions_div(true);
+  searchInput.addEventListener('input', () => {
+    const searchText = searchInput.value.trim().toLowerCase();
+    var filteredOptions = searchText==""?[]:knownList.filter(option =>
+      option.toLowerCase().includes(searchText)
+    );
+    displayAutocompleteResults(filteredOptions);
+  });
 }
 
 async function fetch_data(input){
@@ -64,7 +65,7 @@ async function fetch_data(input){
 function roundUp(number, places) {
     const powerOf10 = Math.pow(10, places)
     if (Math.floor(number * powerOf10) !== number * powerOf10) {
-        const roundedNumber = Math.ceil(number * powerOf10) / powerOf10;
+        const roundedNumber = Math.round(number * powerOf10) / powerOf10;
         return roundedNumber.toFixed(places);
     } else {
         return number.toString();

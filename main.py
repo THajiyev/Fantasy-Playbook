@@ -20,9 +20,12 @@ options = [
 
 data_manager = DataManager()
 
+def get_stat_display(stat):
+    return next(item['label'] for item in options if item['value'] == stat)
+
 def update_graph(fig, players, stat):
     fig.data = []
-    stat_display = next(item['label'] for item in options if item['value'] == stat)[:-1]+"(s)"
+    stat_display = get_stat_display(stat)[:-1]+"(s)"
     for player, player_data in data_manager.get_data(players, stat):
         fig.add_trace(
             go.Scatter(
@@ -44,7 +47,7 @@ def generate_line_plot(players, stat):
     )
     fig.update_layout(
         xaxis_title='Week',
-        yaxis_title=next(item['label'] for item in options if item['value'] == stat),
+        yaxis_title=get_stat_display(stat),
         showlegend=True
     )
     return update_graph(fig, players, stat)
@@ -60,6 +63,11 @@ def home():
 def display_stats():
     data_manager.clear()
     return render_template('stats.html')
+
+@app.route('/teams')
+def compare_teams():
+    data_manager.clear()
+    return render_template('chart.html')
 
 @app.route('/projections')
 def display_projections():
@@ -82,6 +90,9 @@ async def get_data():
         player = [request_type[11:]]
         row = await asyncio.to_thread(get_mass_z_predictions, player)
         return jsonify(rows=row)
+    elif request_type=="offense_comparison":
+        data = await asyncio.to_thread(team_stats)
+        return jsonify(data=data)
     else:
         player_stats = await asyncio.to_thread(get_player_stats, request_type)
         return jsonify(player_stats)
@@ -90,6 +101,7 @@ fig = generate_line_plot([], "rec")
 
 dash_app = dash.Dash(__name__, server=app, url_base_pathname='/graph/')
 
+dash_app.title = "Graphing App"
 dash_app.layout = html.Div([
     html.A(
         "Back to Home", 
@@ -135,7 +147,7 @@ dash_app.layout = html.Div([
      dash.dependencies.Input('stat-dropdown', 'value')])
 def update_output(selected_players, stat):
     fig.update_layout(
-        yaxis_title=next(item['label'] for item in options if item['value'] == stat)
+        yaxis_title=get_stat_display(stat)
     )
     return update_graph(fig, selected_players, stat)
 

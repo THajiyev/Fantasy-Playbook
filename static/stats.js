@@ -4,6 +4,8 @@ const noDataAvailable = document.getElementById("no-data");
 var players_list = [];
 var knownList = [];
 
+initialize();
+
 const abbreviations= {
   "Target Share":"tgt_sh",
   "Weighted Opportunity Rating":"wopr_y",
@@ -77,7 +79,7 @@ function removeColumnByIndex(player_name) {
     }
   }
   indexToRemove = players_list.indexOf(player_name);
-  knownList.push(player_name);
+  knownList.unshift(player_name);
   players_list.splice(indexToRemove, 1);
   showTableDisplay(players_list.length>0);
   showNoDataAvailable(players_list.length==0);
@@ -96,8 +98,6 @@ document.getElementById('autocompleteResults').addEventListener('click', (event)
         })
         .catch((error) => {
           console.error('Error:', error);
-          console.log(selectedName);
-          console.log(data)
         });
       }
       clear_input();

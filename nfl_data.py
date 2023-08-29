@@ -23,24 +23,6 @@ def add_to_schedule(data, teams, week):
         data[current_team]= schedule
     return data
 
-def format_df(data, columns_to_keep):
-    return data.loc[:, columns_to_keep]
-
-def get_value(input_value):
-    full_length = len(input_value)
-    for index in range(1, len(input_value)):
-        sub_string = input_value[0:index]
-        reps = full_length/len(sub_string)
-        if full_length%len(sub_string)==0:
-            if input_value==sub_string*int(reps):
-                return sub_string
-    return input_value
-
-def fix_typos(data, bad_columns):
-    for column in bad_columns:
-        data[column] = data[column].apply(get_value)
-    return data
-
 def get_teams_schedule(year=current_season):
     schedules =nfl.import_schedules([year])
     schedules = schedules[schedules['game_type'] == 'REG']

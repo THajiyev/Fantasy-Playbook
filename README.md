@@ -35,6 +35,7 @@ Data sources utilized:
 - [Fantasy Pros](https://www.fantasypros.com)
 - [FFToday](https://www.fftoday.com/index.html)
 - [NFL Data Py](https://github.com/cooperdff/nfl_data_py)
+- [NFL Official Website](https://www.nfl.com)
 
 ## Future of the Project
 

@@ -5,8 +5,9 @@ def get_season():
     september_first = date(current_year, 9, 1)
     days_to_add = (7 - september_first.weekday()) % 7
     labor_day = september_first + timedelta(days=days_to_add)
+    end_of_week_1 = labor_day + timedelta(days=3)
     today_est = datetime.now(timezone(timedelta(hours=-5))).date()
-    if today_est>labor_day:
+    if today_est>end_of_week_1:
         return current_year
     else:
         return current_year-1
@@ -70,3 +71,24 @@ def get_relevant_columns():
         "fantasy_points_ppr"
     ]
     return relevant_columns
+
+def format_team(team):
+    return team[:len(team) // 2]
+
+def format_df(data, columns_to_keep):
+    return data.loc[:, columns_to_keep]
+
+def get_value(input_value):
+    full_length = len(input_value)
+    for index in range(1, len(input_value)):
+        sub_string = input_value[0:index]
+        reps = full_length/len(sub_string)
+        if full_length%len(sub_string)==0:
+            if input_value==sub_string*int(reps):
+                return sub_string
+    return input_value
+
+def fix_typos(data, bad_columns):
+    for column in bad_columns:
+        data[column] = data[column].apply(get_value)
+    return data

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rushing vs Passing</title>
+    <link rel="stylesheet" href="../static/chart.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Rushing vs Passing</h1>      
+        <div class="options">
+            <label for="dataType">Select Data Type: </label>
+            <select id="dataType">
+                <option value="TDs" selected>TDs</option>
+                <option value="Attempts">Attempts</option>
+                <option value="Yards">Yards</option>
+            </select>
+            <label for="valueType">Value Type: </label>
+            <select id="valueType">
+                <option value="raw" selected>Raw Value</option>
+                <option value="percentage">Percentage</option>
+            </select>
+        </div>
+        <div class="legend-container">
+            <div class="legend-item">
+                <div class="color-box" style="background-color: blue;"></div>
+                <div class="legend-text">Passing</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: orange;"></div>
+                <div class="legend-text">Rushing</div>
+            </div>
+        </div>  
+        <div id="barChart"></div>
+    </div>
+    <script src="../static/helpers.js"></script>
+    <script src="../static/chart.js"></script>
+</body>
+</html>

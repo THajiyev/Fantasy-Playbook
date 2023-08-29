@@ -7,6 +7,8 @@ var loadingOverlay = document.getElementById('loading-overlay');
 var searchModeOn = false;
 var knownList = [];
 
+initialize();
+
 function showLoadingOverlay(show) {
     if(show){
         loadingOverlay.style.display = 'flex';

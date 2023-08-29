@@ -25,9 +25,14 @@ def get_fantasy_pros_ids():
         column = row.find_all(['th', 'td'])[1]
         position = row.find_all(['th', 'td'])[2].get_text()[0:2]
         if position in ["RB","WR", "TE"]:
-            link_name = column.find_all('a')[0]['href'][13:-4]
-            name = column.find_all('a')[1]['fp-player-name']
-            id = column.find_all('a')[1]['class'][1][6:]
+            hyperlinks = column.find_all('a')
+            link_name = hyperlinks[0]['href'][13:-4]
+            try:
+                name = hyperlinks[1]['fp-player-name']
+                id = hyperlinks[1]['class'][1][6:]
+            except:
+                name = hyperlinks[2]['fp-player-name']
+                id = hyperlinks[2]['class'][1][6:]
             table_data.append(
                 [
                     name,
@@ -211,3 +216,41 @@ def get_mass_z_predictions(players, year=current_season):
     for thread in threads:
         thread.join()
     return data
+
+def get_team_stats_df(year=current_season):
+    stat_type = ["passing","rushing","receiving","scoring"]
+    df = None
+    for stat in stat_type:
+        url = f"https://www.nfl.com/stats/team-stats/offense/{stat}/{year}/reg/all"
+        data = scrape_table(url)
+        columns = data[0]
+        if columns[1]=="Att":
+            columns[1]= stat.capitalize()+" Att"
+        new_df = pd.DataFrame(data[1:], columns=columns).iloc[:, :3]
+        if df is None:
+            df = new_df
+        else:
+            df = df.merge(new_df, on='Team', how='outer')
+    df['Team'] = df['Team'].apply(format_team)
+    df.rename(columns={'Yds': 'Rec Yds'}, inplace=True)
+    return df
+
+def team_stats(year=current_season):
+    df = get_team_stats_df(year)
+    output_data = {}
+    for _, row in df.iterrows():
+        output_data[row['Team']] = {
+            "Attempts": [
+                row['Passing Att'],
+                row['Rushing Att']
+            ],
+            "TDs": [
+                row["Rec TD"],
+                row["Rsh TD"]
+            ],
+            "Yards": [
+                row["Rec Yds"],
+                row["Rush Yds"]
+            ]
+        }
+    return output_data
