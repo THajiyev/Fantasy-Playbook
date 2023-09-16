@@ -5,7 +5,7 @@ def get_season():
     september_first = date(current_year, 9, 1)
     days_to_add = (7 - september_first.weekday()) % 7
     labor_day = september_first + timedelta(days=days_to_add)
-    end_of_week_1 = labor_day + timedelta(days=3)
+    end_of_week_1 = labor_day + timedelta(days=7)
     today_est = datetime.now(timezone(timedelta(hours=-5))).date()
     if today_est>end_of_week_1:
         return current_year
@@ -57,6 +57,7 @@ def get_relevant_columns():
     relevant_columns = [
         "player_display_name",
         "position",
+        "carries",
         "rushing_yards",
         "rushing_tds",
         "receptions",
@@ -68,6 +69,7 @@ def get_relevant_columns():
         "wopr_y",#Weighted Opportunity Rating = 1.5 * Target Share + 0.7 * Share of Team Air Yards
         "rtd_sh",#receiving touchdowns share
         "yptmpa",#Receiving Yards Per Team Pass Attempt
+        "games",
         "fantasy_points_ppr"
     ]
     return relevant_columns
@@ -92,3 +94,9 @@ def fix_typos(data, bad_columns):
     for column in bad_columns:
         data[column] = data[column].apply(get_value)
     return data
+
+def fantasy_pros_format(player_name):
+    for ending in get_abbreviations().keys():
+        if player_name.endswith(ending):
+            return player_name[:-len(ending)]
+    return player_name

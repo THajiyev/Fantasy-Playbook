@@ -21,7 +21,7 @@ function updateChart() {
             return totalA - totalB;
         });
 
-    const selectedTeamData = sortedIndices.map(index => {
+    var selectedTeamData = sortedIndices.map(index => {
         const team = teamLabels[index];
         const selectedDataTypeValues = data[team][selectedDataType];
         const sumOfValues = data[team][selectedDataType][0] + data[team][selectedDataType][1];
@@ -31,23 +31,26 @@ function updateChart() {
         const opposingValue = selectedValueType === 'percentage' ?
             (selectedDataTypeValues[1] / sumOfValues) * 100 :
             selectedDataTypeValues[1];
-
-        return {
-            x: [value, opposingValue],
-            y: [team + "  ", team + "  "],
-            type: 'bar',
-            orientation: 'h',
-            marker: {
-                color: [teamColors.Rushing, teamColors.Receiving]
-            },
-            text: [
-                roundUp(value, 2) + (selectedValueType === 'percentage' ? '%' : ''),
-                roundUp(opposingValue, 2) + (selectedValueType === 'percentage' ? '%' : '')
-            ],
-            textposition: 'inside',
-            hoverinfo: 'none'
-        };
+        if (value+opposingValue>0){
+            return {
+                x: [value, opposingValue],
+                y: [team + "  ", team + "  "],
+                type: 'bar',
+                orientation: 'h',
+                marker: {
+                    color: [teamColors.Rushing, teamColors.Receiving]
+                },
+                text: [
+                    roundUp(value, 2) + (selectedValueType === 'percentage' ? '%' : ''),
+                    roundUp(opposingValue, 2) + (selectedValueType === 'percentage' ? '%' : '')
+                ],
+                textposition: 'inside',
+                hoverinfo: 'none'
+            };
+        }
     });
+
+    selectedTeamData = selectedTeamData.filter(item => item !== null && item !== undefined);
 
     const layout = {
         barmode: 'stack',

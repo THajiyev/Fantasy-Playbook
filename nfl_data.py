@@ -31,7 +31,11 @@ def get_teams_schedule(year=current_season):
         home_team = row.home_team
         away_team = row.away_team
         week = row.week
-        team_schedules = add_to_schedule(data=team_schedules, teams=[home_team, away_team], week=week)
+        team_schedules = add_to_schedule(
+            data=team_schedules, 
+            teams=[home_team, away_team], 
+            week=week
+        )
     return team_schedules
 
 def get_all_data(year=current_season):
@@ -51,7 +55,9 @@ def get_player_stats(name, year=current_season):
     df = get_all_data(year)
     row = df[df["player_display_name"] == name]
     if not row.empty:
-        row_dict = row.iloc[0].to_dict()
+        row = row.iloc[0]
+        row.fillna(0, inplace=True)
+        row_dict = row.to_dict()
         del row_dict["player_display_name"]
         json_object = json.dumps(row_dict)
         return json_object

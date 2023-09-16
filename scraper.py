@@ -76,11 +76,13 @@ def scrape_table(url, index=0):
     return table_data
 
 def get_position_projections(position, week):
+    position = position.lower()
     url = f"https://www.fantasypros.com/nfl/projections/{position}.php?week={week}&scoring=PPR"
     data = scrape_table(url)
     receiver = data[0][1]=="RECEIVING"
-    data = data[1:]
-    if position.upper() in ["RB", "WR", "TE"]:
+    if position not in ["k", "dst"]:
+        data = data[1:]
+    if position in ["rb", "wr"]:
         if receiver:
             data[0][2] = "REC YDS"
             data[0][3] = "REC TDS"
@@ -91,14 +93,15 @@ def get_position_projections(position, week):
             data[0][3] = "RUSH TDS"
             data[0][5] = "REC YDS"
             data[0][6] = "REC TDS"
-    return pd.DataFrame(data[1:], columns=data[0])
+    df = pd.DataFrame(data[1:], columns=data[0])
+    df["Player"] = df["Player"].apply(fantasy_pros_format)
+    return df
 
 def get_player_projection(player): 
     player = format_name(player)
     url=f"https://www.fantasypros.com/nfl/projections/{player}.php?scoring=PPR"
     data = scrape_table(url, index=0)
-    df = pd.DataFrame(data[1:], columns=data[0])
-    return df
+    return pd.DataFrame(data[1:], columns=data[0])
 
 def get_player_weekly_stats(player, year=current_season):
     player = format_name(player)
@@ -128,7 +131,18 @@ def get_points_against(position, year=current_season):
     position = (["QB", "RB", "WR", "TE"].index(position.upper())+1)*10
     url = f"https://www.fftoday.com/stats/fantasystats.php?Season={year}&GameWeek=Season&PosID={position}&Side=Allowed&LeagueID=107644"
     data = scrape_table(url, 7)[1:]
-    data[0] = ['Team', 'G', 'Att', 'Rushing Yards', 'Rushing TDs', 'Rec', 'Receiving Yards', 'Receiving TDs', 'FPts', 'FPts/G']
+    data[0] = [
+        'Team', 
+        'G', 
+        'Att', 
+        'Rushing Yards', 
+        'Rushing TDs', 
+        'Rec', 
+        'Receiving Yards', 
+        'Receiving TDs', 
+        'FPts', 
+        'FPts/G'
+    ]
     for index in range(1, len(data)):
         value = data[index][0]
         start = value.index(".")+1
@@ -181,7 +195,7 @@ def get_z_score_projections(player, points_against_dfs, year=current_season):
             z_score = (float(team_average.iloc[0]) - teams_mean) / teams_st_dev
             projection = player_mean + z_score*player_st_dev
             projections.append(projection)
-        else:
+        elif row["Week"] in player_df['Week'].values:
             fantasy_points = player_df[player_df['Week'] == row["Week"]]['Points']
             completed_games.append(float(fantasy_points.iloc[0]))
     return projections, completed_games
@@ -210,7 +224,8 @@ def get_mass_z_predictions(players, year=current_season):
     threads = []
     data_lock = threading.Lock()
     for player in players:
-        thread = threading.Thread(target=process_player, args=(player, points_against_dfs, data, data_lock))
+        arguments = (player, points_against_dfs, data, data_lock)
+        thread = threading.Thread(target=process_player, args=arguments)
         threads.append(thread)
         thread.start()
     for thread in threads:
