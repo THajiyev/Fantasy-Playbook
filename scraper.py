@@ -179,11 +179,11 @@ def get_z_score_projections(player, points_against_dfs, year=current_season):
     teams_st_dev = points_against_df["FPts"].std()
     projections = []
     completed_games = []
-    if player_df.empty or len(player_df)<4:
+    if len(player_df)<4:
         last_year_df = get_player_weekly_stats(player, year-1)
         last_year_df["Week"]=0
         player_df = pd.concat([player_df, last_year_df], ignore_index=True)
-        if player_df.empty or len(player_df)==1:
+        if len(player_df)<4:
             return None, None
     player_mean = player_df["Points"].mean()
     player_st_dev = player_df["Points"].std()
