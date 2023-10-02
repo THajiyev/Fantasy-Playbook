@@ -84,7 +84,7 @@ async def get_data():
         names = await asyncio.to_thread(get_fantasy_pros_names)
         return jsonify(array=names)
     elif request_type.startswith("projections"):
-        rows = await asyncio.to_thread(get_mass_z_predictions, get_fantasy_pros_names()[0:55])
+        rows = await asyncio.to_thread(get_mass_z_predictions)
         return jsonify(rows=rows)
     elif request_type.startswith("projection:"):
         player = [request_type[11:]]

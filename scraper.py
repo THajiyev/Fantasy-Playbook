@@ -214,7 +214,12 @@ def process_player(player, points_against_dfs, data, lock):
     except:
         pass
 
-def get_mass_z_predictions(players, year=current_season):
+def get_mass_z_predictions(players=None, year=current_season):
+    if players is None:
+        players = []
+        for position in ["rb","wr", "te"]:
+            url = f"https://www.fantasypros.com/nfl/stats/{position}.php?scoring=PPR"
+            players += [fantasy_pros_format(player_row[1]) for player_row in scrape_table(url)[2:]][0:50]
     points_against_dfs = {
         "WR":get_points_against("WR", year),
         "RB":get_points_against("RB", year),

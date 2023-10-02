@@ -99,4 +99,6 @@ def fantasy_pros_format(player_name):
     for ending in get_abbreviations().keys():
         if player_name.endswith(ending):
             return player_name[:-len(ending)]
+        elif player_name.endswith("("+ending+")"):
+            return  player_name[:-len(ending)-2]
     return player_name
