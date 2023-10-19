@@ -7,6 +7,7 @@ var loadingOverlay = document.getElementById('loading-overlay');
 var searchModeOn = false;
 var knownList = [];
 
+const sortIndex = 2;
 initialize();
 
 function showLoadingOverlay(show) {
@@ -48,7 +49,7 @@ function add_projections() {
     fetch_data('projections').then(function (data) {
         var rows = data.rows;
         insert_rows(rows);
-        sortTable(1);
+        sortTable(sortIndex);
         showLoadingOverlay(false);
     })
     .catch(function (error) {
@@ -109,7 +110,7 @@ document.getElementById('autocompleteResults').addEventListener('click', (event)
             }
             else{
                 insert_rows(data.rows);
-                sortTable(1);
+                sortTable(sortIndex);
             }
           })
           .catch((error) => {

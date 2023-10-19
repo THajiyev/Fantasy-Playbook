@@ -163,10 +163,10 @@ def get_schedule(player):
     data = scrape_table(url, 1)[1:]
     for index in range(1, len(data)):
         data[index][0] = int(data[index][0].replace("Week ",""))
-    data = [item for item in data if item[1] != 'BYE']
     df = pd.DataFrame(data[1:], columns=data[0])
     df = df.drop(columns=['Game Time', 'Matchup Rating'])
     last_week_played = float(df[df['Opp'] == next_opponent]["Week"].iloc[0])-1
+    df = df[df['Opp'] != 'BYE']
     df["Played"] = df["Week"].apply(lambda x:False if x>last_week_played else True)
     return df
 
@@ -198,17 +198,18 @@ def get_z_score_projections(player, points_against_dfs, year=current_season):
         elif row["Week"] in player_df['Week'].values:
             fantasy_points = player_df[player_df['Week'] == row["Week"]]['Points']
             completed_games.append(float(fantasy_points.iloc[0]))
-    return projections, completed_games
+    return projections, completed_games, position
 
 def process_player(player, points_against_dfs, data, lock):
     try:
-        projections, _ = get_z_score_projections(player, points_against_dfs)
+        projections, _, position = get_z_score_projections(player, points_against_dfs)
         if projections is not None and len(projections) > 0:
             with lock:
                 data.append(
                     [
                         player,
-                        round(sum(projections) / len(projections), 2)
+                        position.upper(),
+                        round(sum(projections)/len(projections), 1)
                     ]
                 )
     except:
