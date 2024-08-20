@@ -27,19 +27,20 @@ def get_fantasy_pros_ids():
         if position in ["RB","WR", "TE"]:
             hyperlinks = column.find_all('a')
             link_name = hyperlinks[0]['href'][13:-4]
-            try:
-                name = hyperlinks[1]['fp-player-name']
-                id = hyperlinks[1]['class'][1][6:]
-            except:
-                name = hyperlinks[2]['fp-player-name']
-                id = hyperlinks[2]['class'][1][6:]
-            table_data.append(
-                [
-                    name,
-                    link_name,
-                    int(id)
-                ]
-            )
+            for item in hyperlinks:
+                try:
+                    name = item['fp-player-name']
+                    id = item['class'][-1].split("-")[-1]
+                    table_data.append(
+                        [
+                            name,
+                            link_name,
+                            int(id)
+                        ]
+                    )
+                    break
+                except:
+                    pass
     fantasy_pros_df = pd.DataFrame(table_data, columns=["name", "link", 'fantasypros_id'])
     nfl_data_df = get_library_ids()
     merged_df = pd.merge(fantasy_pros_df, nfl_data_df, on='fantasypros_id', how='inner')
